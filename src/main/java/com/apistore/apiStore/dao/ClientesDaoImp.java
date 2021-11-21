@@ -52,6 +52,21 @@ public class ClientesDaoImp implements ClientesDao {
         return "OK";
     }
 
+    public String updateCliente(Clientes cliente){
+
+        String query= "FROM Clientes WHERE id = :id";
+        List<Clientes> clienteGet = entityManager.createQuery(query)
+                .setParameter("id",cliente.getId() )
+                .getResultList();
+
+        if(clienteGet.isEmpty()){
+            return "USER NOT FOUND";
+        }
+        if(entityManager.merge(cliente) == null){
+            return "FAIL";
+        }
+        return "OK";
+    }
     @Override
     public Clientes loginCliente(Clientes cliente) {
 

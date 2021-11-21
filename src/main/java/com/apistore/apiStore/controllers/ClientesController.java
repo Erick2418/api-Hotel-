@@ -88,8 +88,33 @@ public class ClientesController {
         map.put("data", response);
         return new ResponseEntity<>(map,HttpStatus.OK);
 
-
     }
+
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @RequestMapping(value = "api/cliente/update", method = RequestMethod.PUT)
+    public ResponseEntity<Map<String,String>> UpdateCliente(@Valid  @RequestBody Clientes cliente,BindingResult result){ //List<Usuario>
+
+        HashMap<String, String> map = new HashMap<>();
+
+        if(result.hasErrors()){ //@valid..
+            String msjError = result.getFieldError().getDefaultMessage();
+            map.put("data", msjError);
+            return new ResponseEntity<>(map,HttpStatus.BAD_REQUEST);
+        }
+
+        String resultado = clientesDao.updateCliente(cliente);
+
+
+        map.put("data", resultado);
+        if(resultado.equals("FAIL")){
+            return new ResponseEntity<>(map,HttpStatus.BAD_REQUEST);
+        }else if(resultado.equals("USER NOT FOUND")){
+            return new ResponseEntity<>(map,HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(map,HttpStatus.OK);
+    }
+
 
 
 }

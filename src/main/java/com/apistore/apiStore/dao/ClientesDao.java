@@ -15,4 +15,6 @@ public interface ClientesDao {
     Clientes loginCliente(Clientes cliente);
 
     String deleteCliente(Integer id);
+
+    String updateCliente(Clientes cliente);
 }
