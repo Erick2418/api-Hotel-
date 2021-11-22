@@ -31,14 +31,19 @@ public class ClientesController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value = "api/clientes")
-    public ResponseEntity<List<Clientes>> getClientes(){
+    public ResponseEntity<List<Clientes>> getClientes( @RequestHeader(value = "token")  String token ){
+        if(!validarToken(token)){ return null;}
+
         List<Clientes> clientesList= clientesDao.getClientes();
         return new ResponseEntity<> (clientesList,HttpStatus.OK);
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value = "api/cliente/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Clientes> getCliente(@PathVariable Integer id){ //List<Usuario>
+    public ResponseEntity<Clientes> getCliente(@PathVariable Integer id, @RequestHeader(value = "token")  String token){ //List<Usuario>
+
+        if(!validarToken(token)){ return null;}
+
         Clientes cliente1= clientesDao.getCliente(id);
         if(cliente1 == null){
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
@@ -49,7 +54,7 @@ public class ClientesController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value = "api/cliente", method = RequestMethod.POST)
-    public ResponseEntity<Map<String,String>> CrearCliente(@Valid  @RequestBody Clientes cliente,BindingResult result){ //List<Usuario>
+    public ResponseEntity<Map<String,String>> CrearCliente(@Valid  @RequestBody Clientes cliente, BindingResult result){ //List<Usuario>
 
         HashMap<String, String> map = new HashMap<>();
 
@@ -78,7 +83,10 @@ public class ClientesController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value = "api/cliente/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Map<String,String>> DeleteCliente(@PathVariable Integer id){ //List<Usuario>
+    public ResponseEntity<Map<String,String>> DeleteCliente(@PathVariable Integer id, @RequestHeader(value = "token")  String token){ //List<Usuario>
+
+        if(!validarToken(token)){ return null;}
+
         HashMap<String, String> map = new HashMap<>();
         String response = clientesDao.deleteCliente(id);
         if(response.equals("NOT_FOUNT")){
@@ -93,7 +101,9 @@ public class ClientesController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value = "api/cliente/update", method = RequestMethod.PUT)
-    public ResponseEntity<Map<String,String>> UpdateCliente(@Valid  @RequestBody Clientes cliente,BindingResult result){ //List<Usuario>
+    public ResponseEntity<Map<String,String>> UpdateCliente(@Valid  @RequestBody Clientes cliente, @RequestHeader(value = "token")  String token ,BindingResult result){ //List<Usuario>
+
+        if(!validarToken(token)){ return null;}
 
         HashMap<String, String> map = new HashMap<>();
 
@@ -116,5 +126,12 @@ public class ClientesController {
     }
 
 
+    private boolean validarToken(String token){
+        //mejorar esto!
+        // Spring Secutity..
+        //Control de Errores (manejo de status
+        String usuarioId = jwtUtil.getKey(token);
+        return usuarioId != null; //si el usuario no es nulo returno algo?
+    }
 
 }
